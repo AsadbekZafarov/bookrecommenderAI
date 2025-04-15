@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Book Quest</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .tab-button {
+            border-radius: 20px;
+            font-weight: bold;
+            padding: 6px 16px;
+            border: none;
+            margin-right: 10px;
+        }
+        .tab-button.active {
+            background-color: #fff;
+            color: #333;
+        }
+        .tab-button.inactive {
+            background-color: #ccc;
+            color: #666;
+        }
+        .book-cover {
+            height: 250px;
+            object-fit: cover;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+        .book-cover:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="text-center text-white mb-4">
+        <h1><span style="color: #31c6d4;">AI</span> <span style="color: #f4cb44;">Book Quest</span></h1>
+    </div>
+
+    <div class="container d-flex flex-column flex-md-row justify-content-center align-items-start gap-4">
+        <!-- Left Panel: Form -->
+        <div class="bg-white rounded-4 p-4 shadow" style="min-width: 300px; max-width: 400px; width: 100%;">
+            <div class="mb-3 d-flex justify-content-between">
+                <button class="tab-button active" onclick="showTab('lastReads')">By last reads</button>
+                <button class="tab-button inactive" onclick="showTab('filter')">By filter</button>
+            </div>
+
+            <!-- By Last Reads Form -->
+            <div id="lastReadsTab">
+                <form method="post" action="{% url 'last_read_search' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Title 1</label>
+                        <input type="text" class="form-control" name="title1" placeholder="e.g. the orient express">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title 2</label>
+                        <input type="text" class="form-control" name="title2" placeholder="e.g. and then there was none">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title 3</label>
+                        <input type="text" class="form-control" name="title3" placeholder="e.g. the pale horse">
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- By Filter Form -->
+            <div id="filterTab" style="display: none;">
+                <form method="post" action="{% url 'filter_search' %}" autocomplete="off">
+                    {% csrf_token %}
+                    <input type="hidden" name="search-type" value="filter">
+                    <div class="mb-2 small text-muted">Make a selection and search your next read</div>
+
+                    <div class="mb-3">
+                        <label for="genre" class="form-label">Genre</label>
+                        <select class="form-select" name="genre" id="genre">
+                            <option value="">-- Select Genre --</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="romance">Romance</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="sci-fi">Sci-Fi</option>
+                            <option value="thriller">Thriller</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="book-length" class="form-label">Book Length</label>
+                        <select class="form-select" name="book-length" id="book-length">
+                            <option value="">-- Select Length --</option>
+                            <option value="short">Short (&lt; 200 pages)</option>
+                            <option value="medium">Medium (200–400 pages)</option>
+                            <option value="long">Long (&gt; 400 pages)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Author</label>
+                        <input type="text" class="form-control" name="author" placeholder="e.g. Agatha Christie">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Publication</label>
+                        <input type="text" class="form-control" name="publication" placeholder="e.g. HarperCollins">
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Panel: Results -->
+        <div class="flex-grow-1">
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+                {% for book in books %}
+                <div class="col">
+                    <div class="card border-0">
+                        <img src="{{ book.cover_url }}" class="book-cover rounded" alt="{{ book.title }}">
+                        <div class="card-body text-center p-2">
+                            <small class="text-white">{{ book.title }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            const lastTab = document.getElementById('lastReadsTab');
+            const filterTab = document.getElementById('filterTab');
+            const buttons = document.querySelectorAll('.tab-button');
+
+            if (tab === 'lastReads') {
+                lastTab.style.display = 'block';
+                filterTab.style.display = 'none';
+                buttons[0].classList.add('active');
+                buttons[0].classList.remove('inactive');
+                buttons[1].classList.remove('active');
+                buttons[1].classList.add('inactive');
+            } else {
+                lastTab.style.display = 'none';
+                filterTab.style.display = 'block';
+                buttons[0].classList.remove('active');
+                buttons[0].classList.add('inactive');
+                buttons[1].classList.add('active');
+                buttons[1].classList.remove('inactive');
+            }
+        }
+    </script>
+</body>
+</html>
