@@ -6,8 +6,8 @@ import re
 
 
 
-def index(request):
-    return render(request, 'index.html')
+def login(request):
+    return render(request, 'login_page.html')
 def recommend(request):
     return render(request, 'recommend.html')
 
@@ -26,7 +26,7 @@ def filter_search(request):
 @csrf_exempt
 
 
-def last_read_search(request):
+def by_ai(request):
     if request.method == 'POST':
         title1 = request.POST.get('title1')
         title2 = request.POST.get('title2')

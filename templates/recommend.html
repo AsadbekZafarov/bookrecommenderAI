@@ -80,7 +80,6 @@
 
     <div class="text-center text-white mb-4">
         <h1><span style="color: #31c6d4;">AI</span> <span style="color: #f4cb44;">Book Quest</span></h1>
-        <img src="https://en.wikipedia.org/wiki/The_Name_of_the_Wind#/media/File:TheNameoftheWind_cover.jpg" class="img-fluid rounded-start" alt="NO">
 
     </div>
 
@@ -88,13 +87,13 @@
         <!-- Left Panel: Form -->
         <div class="bg-white rounded-4 p-4 shadow" style="min-width: 300px; max-width: 400px; width: 100%;">
             <div class="mb-3 d-flex justify-content-between">
-                <button class="tab-button active" onclick="showTab('lastReads')">By last reads</button>
+                <button class="tab-button active" onclick="showTab('lastReads')">By AI</button>
                 <button class="tab-button inactive" onclick="showTab('filter')">By filter</button>
             </div>
 
             <!-- By Last Reads Form -->
             <div id="lastReadsTab">
-                <form method="post" action="{% url 'last_read_search' %}">
+                <form method="post" action="{% url 'by_ai' %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="genre" class="form-label">Genre</label>
@@ -177,7 +176,7 @@
     </div>
   </div>
   {% empty %}
-  <p class="text-light">No recommendations found.</p>
+  <p class="text-light"></p>
   {% endfor %}
 </div>
 
