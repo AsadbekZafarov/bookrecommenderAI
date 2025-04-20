@@ -1,9 +1,50 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kitob Rasmini Topish</title>
+</head>
+<body>
+  <div>
+    <label for="kitobNomi">Kitob Nomi:</label>
+    <input type="text" id="kitobNomi">
+    <button onclick="kitobRasminiYuklash()">Rasmni Topish</button>
+  </div>
 
-{% block content %}
-    <div class="text-center">
-        <h1 class="display-4">AI Book Quest</h1>
-        <p class="lead">Создавайте задания и квизы на основе книг с помощью ИИ</p>
-        <a href="#" class="btn btn-primary btn-lg mt-4">Начать</a>
-    </div>
-{% endblock %}
+  <div id="rasmContainer"></div>
+
+  <script>
+    async function kitobRasminiYuklash() {
+      const kitobNomi = document.getElementById('kitobNomi').value.trim();
+      if (!kitobNomi) {
+        alert("Iltimos, kitob nomini kiriting!");
+        return;
+      }
+
+      const apiManzili = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(kitobNomi)}`;
+
+      try {
+        const javob = await fetch(apiManzili);
+        const malumotlar = await javob.json();
+
+        const item = malumotlar.items?.[0];
+        const imageLink = item?.volumeInfo?.imageLinks?.thumbnail;
+
+        const rasmContainer = document.getElementById('rasmContainer');
+        rasmContainer.innerHTML = '';
+
+        if (imageLink) {
+          const rasmElementi = document.createElement('img');
+          rasmElementi.src = imageLink;
+          rasmElementi.alt = kitobNomi + " muqovasi";
+          rasmContainer.appendChild(rasmElementi);
+        } else {
+          rasmContainer.innerText = "Bu kitob uchun rasm topilmadi.";
+        }
+      } catch (xatolik) {
+        console.error("Kitob rasmini yuklashda xatolik:", xatolik);
+        document.getElementById('rasmContainer').innerText = "Kitob rasmini yuklashda xatolik yuz berdi.";
+      }
+    }
+  </script>
+</body>
+</html>

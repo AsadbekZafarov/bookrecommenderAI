@@ -6,6 +6,46 @@
     <title>AI Book Quest</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <style>
+  .card {
+    height: 380px;
+    overflow: hidden;
+    border-radius: 14px;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .card:hover {
+    transform: scale(1.01);
+  }
+
+  .card img {
+    height: 200px;
+    width: 100%;
+    object-fit: contain; /* Rasm qirqilmaydi, to‘liq sig‘adi */
+    background-color: #f9f9f9; /* Rasm kichik bo‘lsa orqa fon bo‘sh qolmasin */
+    padding: 10px;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  .book-description {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .text-muted {
+    font-size: 0.85rem;
+  }
+
+
         body {
             background: linear-gradient(to right, #4e54c8, #8f94fb);
             font-family: 'Segoe UI', sans-serif;
@@ -40,6 +80,8 @@
 
     <div class="text-center text-white mb-4">
         <h1><span style="color: #31c6d4;">AI</span> <span style="color: #f4cb44;">Book Quest</span></h1>
+        <img src="https://en.wikipedia.org/wiki/The_Name_of_the_Wind#/media/File:TheNameoftheWind_cover.jpg" class="img-fluid rounded-start" alt="NO">
+
     </div>
 
     <div class="container d-flex flex-column flex-md-row justify-content-center align-items-start gap-4">
@@ -54,6 +96,17 @@
             <div id="lastReadsTab">
                 <form method="post" action="{% url 'last_read_search' %}">
                     {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="genre" class="form-label">Genre</label>
+                        <select class="form-select" name="genre" id="genre">
+                            <option value="">-- Select Genre --</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="romance">Romance</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="sci-fi">Sci-Fi</option>
+                            <option value="thriller">Thriller</option>
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">Title 1</label>
                         <input type="text" class="form-control" name="title1" placeholder="e.g. the orient express">
@@ -79,17 +132,6 @@
                     <input type="hidden" name="search-type" value="filter">
                     <div class="mb-2 small text-muted">Make a selection and search your next read</div>
 
-                    <div class="mb-3">
-                        <label for="genre" class="form-label">Genre</label>
-                        <select class="form-select" name="genre" id="genre">
-                            <option value="">-- Select Genre --</option>
-                            <option value="mystery">Mystery</option>
-                            <option value="romance">Romance</option>
-                            <option value="fantasy">Fantasy</option>
-                            <option value="sci-fi">Sci-Fi</option>
-                            <option value="thriller">Thriller</option>
-                        </select>
-                    </div>
 
                     <div class="mb-3">
                         <label for="book-length" class="form-label">Book Length</label>
@@ -116,10 +158,32 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> 
+        <div class="row mt-3">
+  {% for book in books %}
+  <div class="col-md-3 col-sm-6 mb-3">
+    <div class="card h-100 shadow-sm border-0">
+    <img src="{{ book.Image_Url }}" alt="{{ book.Image_Url }}">
+      <div class="card-body">
+        <h5 class="card-title">{{ book.Title }}</h5>
+        <h6 class="text-muted">by {{ book.Author }}</h6>
+        <p class="book-description" id="desc-{{ forloop.counter }}">
+          {{ book.Description|slice:":100" }}
+          {% if book.Description|length > 100 %}
+            ... <a href="javascript:void(0);" onclick="showFullDescription('{{ forloop.counter }}', `{{ book.Description|escapejs }}`)">Read more</a>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-light">No recommendations found.</p>
+  {% endfor %}
+</div>
+
 
         <!-- Right Panel: Results -->
-        <div class="flex-grow-1">
+        {% comment %} <div class="flex-grow-1">
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
                 {% for book in books %}
                 <div class="col">
@@ -132,8 +196,24 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
+        </div> {% endcomment %}
+               
     </div>
+    
+      
+    
+<script>
+    function showFullDescription(id, fullText) {
+        const desc = document.getElementById(`desc-${id}`);
+        desc.innerHTML = fullText + ' <a href="javascript:void(0);" onclick="collapseDescription(' + id + ', `' + fullText + '`)">Show less</a>';
+    }
+
+    function collapseDescription(id, fullText) {
+        const shortText = fullText.slice(0, 200) + '...';
+        const desc = document.getElementById(`desc-${id}`);
+        desc.innerHTML = shortText + ' <a href="javascript:void(0);" onclick="showFullDescription(' + id + ', `' + fullText + '`)">Read more</a>';
+    }
+</script>
 
     <script>
         function showTab(tab) {

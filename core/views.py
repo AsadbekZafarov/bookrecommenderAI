@@ -1,22 +1,15 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .utils import get_gemini_recommendation
+import re
+
 
 
 def index(request):
     return render(request, 'index.html')
-
-
 def recommend(request):
-    books = [
-        {'title': 'The Girl on the Train', 'cover_url': 'https://example.com/cover1.jpg'},
-        {'title': 'The Great Gatsby', 'cover_url': 'https://example.com/cover2.jpg'},
-        {'title': 'The Catcher in the Rye', 'cover_url': 'https://example.com/cover3.jpg'},
-        {'title': 'The Hitchhiker\'s Guide', 'cover_url': 'https://example.com/cover4.jpg'},
-        {'title': 'The Da Vinci Code', 'cover_url': 'https://example.com/cover5.jpg'},
-        {'title': 'The Alchemist', 'cover_url': 'https://example.com/cover6.jpg'},
-    ]
-    return render(request, 'recommend.html', {'books': books})
+    return render(request, 'recommend.html')
 
 @csrf_exempt
 def filter_search(request):
@@ -31,16 +24,35 @@ def filter_search(request):
     return render(request, 'recommend.html', {'books': []})
 
 @csrf_exempt
+
+
 def last_read_search(request):
     if request.method == 'POST':
-        # Bu yerda foydalanuvchi kiritgan kitob nomlarini o‘qish mumkin
         title1 = request.POST.get('title1')
         title2 = request.POST.get('title2')
         title3 = request.POST.get('title3')
-        # TODO: Bu yerda tavsiya logikasini yozing
-        books = [
-            {'title': f'Similar to {title1}', 'cover_url': 'https://via.placeholder.com/150'},
-            {'title': f'Similar to {title2}', 'cover_url': 'https://via.placeholder.com/150'},
-        ]
+        genre = request.POST.get('genre')
+
+        prompt = f"""
+        I recently read the following books: "{title1}", "{title2}", and "{title3}" from the {genre} genre.
+        Please recommend 8 books that are similar in style. For each, include:
+
+        - Title
+        - Author
+        - Description
+    Do NOT include explanations or text before or after. Just return the JSON array inside triple backticks like this:
+        ```json
+        [
+            {{
+            "Title": "Book Title",
+            "Author": "Author Name",
+            "Description": "Short description...",
+                }}, 
+            ]
+        ```
+        """
+
+        books = get_gemini_recommendation(prompt)
         return render(request, 'recommend.html', {'books': books})
-    return render(request, 'recommend.html', {'books': []})
+
+ 
