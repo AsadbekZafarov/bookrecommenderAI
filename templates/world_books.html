@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Books by Country</title>
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <style>
+    #chartdiv { width: 100%; height: 600px; margin-bottom: 30px; }
+    .book-card {
+      border: 1px solid #ccc;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      display: flex;
+      gap: 16px;
+      background-color: #f9f9f9;
+    }
+    .book-card img {
+      height: 150px;
+    }
+    .book-info {
+      flex: 1;
+    }
+    .book-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .book-author {
+      color: #666;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center">Select a country to see books by its authors</h2>
+  <div id="chartdiv"></div>
+  <div id="book-list" style="max-width:800px; margin:auto;"></div>
+
+  <script>
+    am5.ready(function() {
+      var root = am5.Root.new("chartdiv");
+      root.setThemes([am5themes_Animated.new(root)]);
+
+      var chart = root.container.children.push(am5map.MapChart.new(root, {
+        panX: "rotateX",
+        panY: "rotateY",
+        projection: am5map.geoOrthographic(),
+      }));
+
+      var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+        geoJSON: am5geodata_worldLow,
+        exclude: ["AQ"]
+      }));
+
+      polygonSeries.mapPolygons.template.setAll({
+        tooltipText: "{name}",
+        interactive: true
+      }); 
+
+      polygonSeries.mapPolygons.template.events.on("click", function(ev) {
+        const country = ev.target.dataItem.dataContext.name;
+        fetch("country/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({ country: country })
+        })
+        .then(res => res.json())
+        .then(data => displayBooks(data.books));
+      });
+
+      function displayBooks(books) {
+        const container = document.getElementById("book-list");
+        container.innerHTML = "";
+
+        books.forEach(book => {
+          const div = document.createElement("div");
+          div.className = "book-card";
+
+          const desc = book.Description.length > 200
+            ? book.Description.substring(0, 200) + '... <a href="#">Read more</a>'
+            : book.Description;
+
+          div.innerHTML = `
+            <img src="${book.Image_Url}" alt="cover">
+            <div class="book-info">
+              <div class="book-title">${book.Title}</div>
+              <div class="book-author">by ${book.Author}</div>
+              <div class="book-description">${desc}</div>
+            </div>
+          `;
+
+          container.appendChild(div);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

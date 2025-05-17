@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-GEMINI_API_KEY = "AIzaSyAtJFwGpr6XFAhY-LNQQTX42m2Frmpr3TU"
+GEMINI_API_KEY = "AIzaSyAKxaZzt2n5RzRiEtTnYofYlCbjMYZXJvs"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,6 +116,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+APPEND_SLASH=False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -126,3 +127,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = 'login'  # Bu sizning login sahifangizga mos bo'lishi kerak (url name)
+LOGIN_REDIRECT_URL = 'recommend'  # Login'dan keyin qayerga yo'naltirish kerak
+LOGOUT_REDIRECT_URL = 'login'  # Logout'dan keyin qayerga yo'naltirish kerak

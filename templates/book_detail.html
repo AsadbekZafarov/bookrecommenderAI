@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ book.Title }} | BookAI{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <div class="col-md-4">
+      <img src="{{ book.Image_Url }}" alt="{{ book.Title }}" class="img-fluid rounded shadow-sm">
+    </div>
+    <div class="col-md-8">
+      <h1 class="display-5">{{ book.Title }}</h1>
+      <h4 class="text-muted">by {{ book.Author }}</h4>
+      <p class="mt-4">{{ book.Description }}</p>
+
+      <!-- Buy Now and Back Buttons -->
+      <div class="mt-4 d-flex gap-2">
+        <a href="#" class="btn btn-success px-4">🛒 Buy Now</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

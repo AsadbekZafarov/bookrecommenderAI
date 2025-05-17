@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Home | BookAI{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Background Image -->
+<div class="hero-section text-white d-flex align-items-center" style="
+    background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+    background-size: cover;
+    height: 90vh;
+">
+  <div class="container text-center">
+    <h1 class="display-3 fw-bold">Discover Books Tailored Just for You</h1>
+    <p class="lead">AI-powered book suggestions, curated by mood, genre, and more.</p>  
+    <a href="{% url 'recommend' %}" class="btn btn-lg btn-light px-5 py-3 mt-4">Start Exploring</a>
+  </div>
+</div>
+
+<!-- AI Recommended Books -->
+<div class="container mt-5">
+  <h2 class="text-center mb-4">📚 Trend Books</h2>
+    <div class="d-flex overflow-auto gap-3 pb-3" style="scroll-snap-type: x mandatory;">
+      {% for book in best_sellers|slice:"60:" %}
+      <a href="{% url 'book_detail' book.id %}" class="btn btn-outline-primary btn-sm">
+        <div class="card flex-shrink-0 shadow-sm" style="width: 200px; scroll-snap-align: start;",>
+          <img src="{{ book.Image_Url }}" class="card-img-top" alt="{{ book.Title }}" style="height: 250px; object-fit: cover;">
+          <div class="card-body">
+            <h6 class="card-title">{{ book.Title }}</h6>
+            <p class="text-muted small">{{ book.Author }}</p>
+          </div> 
+        </div>
+        </a>
+      {% endfor %}
+    </div>
+</div>
+
+
+<!-- Best Seller Section with Horizontal Scroll -->
+<div class="container mt-5">
+  <h2 class="text-center mb-4">🔥 Best Sellers</h2>
+  <div class="position-relative">
+    <div class="d-flex overflow-auto gap-3 pb-3" style="scroll-snap-type: x mandatory;">
+      {% for book in best_sellers|slice:":10" %}
+      <a href="{% url 'book_detail' book.id %}" class="btn btn-outline-primary btn-sm">
+        <div class="card flex-shrink-0 shadow-sm" style="width: 200px; scroll-snap-align: start;",>
+          <img src="{{ book.Image_Url }}" class="card-img-top" alt="{{ book.Title }}" style="height: 250px; object-fit: cover;">
+          <div class="card-body">
+            <h6 class="card-title">{{ book.Title }}</h6>
+            <p class="text-muted small">{{ book.Author }}</p>
+          </div> 
+        </div>
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- View More Button -->
+     <div class="text-center text-white mt-3">
+      <a href="{% url 'best_sellers' %}" class="btn btn-outline-primary text-black">View More Best Sellers</a>
+    </div>
+  </div>
+</div>
+
+<!-- ... Davomi ... -->
+
+{% endblock %}

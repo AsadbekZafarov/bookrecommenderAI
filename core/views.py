@@ -1,15 +1,29 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import get_gemini_recommendation
-import re
+import json
+from .models import Book, Books_seller
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login
 
+def best_sellers(request):
+    books = Books_seller.objects.all()
+    return render(request, 'best_seller.html', {'books': books})
 
+def home(request):
+    best_sellers= Books_seller.objects.all()
+    return render(request, 'home.html', {'best_sellers': best_sellers})
 
-def login(request):
-    return render(request, 'login_page.html')
+@login_required(login_url='login')
 def recommend(request):
     return render(request, 'recommend.html')
+
+# @login_required(login_url='login')
+def book_detail(request, book_id):
+    book = get_object_or_404(Books_seller, id=book_id)
+    return render(request, 'book_detail.html', {'book': book})
 
 @csrf_exempt
 def filter_search(request):
@@ -54,5 +68,18 @@ def by_ai(request):
 
         books = get_gemini_recommendation(prompt)
         return render(request, 'recommend.html', {'books': books})
-
- 
+  # Modelingizni moslashtiring
+# def country_books(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         country = data.get('country')
+#         if country:
+#             books = get_books_by_country(country)
+#         else:
+#             books = get_books_by_country('Uzbekistan')
+#         return JsonResponse({'books': books})
+    # if request.method == 'GET':
+    #     country = 'Uzbekistan'
+    #     books = get_books_by_country(country)
+    #     return JsonResponse({'books': books})
+    # return JsonResponse({'error': 'Invalid request'}, status=400)   

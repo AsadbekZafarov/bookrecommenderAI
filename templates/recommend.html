@@ -1,85 +1,10 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>AI Book Quest</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <style>
-  .card {
-    height: 380px;
-    overflow: hidden;
-    border-radius: 14px;
-    transition: transform 0.2s ease-in-out;
-  }
+{% extends "base.html" %}
+{% block title %}{{ book.Title }} | BookAI{% endblock %}
 
-  .card:hover {
-    transform: scale(1.01);
-  }
-
-  .card img {
-    height: 200px;
-    width: 100%;
-    object-fit: contain; /* Rasm qirqilmaydi, to‘liq sig‘adi */
-    background-color: #f9f9f9; /* Rasm kichik bo‘lsa orqa fon bo‘sh qolmasin */
-    padding: 10px;
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
-  }
-
-  .card-body {
-    padding: 0.75rem;
-  }
-
-  .book-description {
-    font-size: 13px;
-    line-height: 1.3;
-  }
-
-  .card-title {
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  .text-muted {
-    font-size: 0.85rem;
-  }
-
-
-        body {
-            background: linear-gradient(to right, #4e54c8, #8f94fb);
-            font-family: 'Segoe UI', sans-serif;
-        }
-        .tab-button {
-            border-radius: 20px;
-            font-weight: bold;
-            padding: 6px 16px;
-            border: none;
-            margin-right: 10px;
-        }
-        .tab-button.active {
-            background-color: #fff;
-            color: #333;
-        }
-        .tab-button.inactive {
-            background-color: #ccc;
-            color: #666;
-        }
-        .book-cover {
-            height: 250px;
-            object-fit: cover;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
-        }
-        .book-cover:hover {
-            transform: scale(1.05);
-        }
-    </style>
-</head>
-<body class="p-4">
+{% block content %}
 
     <div class="text-center text-white mb-4">
-        <h1><span style="color: #31c6d4;">AI</span> <span style="color: #f4cb44;">Book Quest</span></h1>
+        <h1><span style="color: #31c6d4;">AI</span> <span style="color: #f4cb44;">Book Recommend</span></h1>
 
     </div>
 
@@ -104,6 +29,8 @@
                             <option value="fantasy">Fantasy</option>
                             <option value="sci-fi">Sci-Fi</option>
                             <option value="thriller">Thriller</option>
+                            <option value="thriller">Detective</option>
+
                         </select>
                     </div>
                     <div class="mb-3">
@@ -124,41 +51,8 @@
                 </form>
             </div>
 
-            <!-- By Filter Form -->
-            <div id="filterTab" style="display: none;">
-                <form method="post" action="{% url 'filter_search' %}" autocomplete="off">
-                    {% csrf_token %}
-                    <input type="hidden" name="search-type" value="filter">
-                    <div class="mb-2 small text-muted">Make a selection and search your next read</div>
-
-
-                    <div class="mb-3">
-                        <label for="book-length" class="form-label">Book Length</label>
-                        <select class="form-select" name="book-length" id="book-length">
-                            <option value="">-- Select Length --</option>
-                            <option value="short">Short (&lt; 200 pages)</option>
-                            <option value="medium">Medium (200–400 pages)</option>
-                            <option value="long">Long (&gt; 400 pages)</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Author</label>
-                        <input type="text" class="form-control" name="author" placeholder="e.g. Agatha Christie">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Publication</label>
-                        <input type="text" class="form-control" name="publication" placeholder="e.g. HarperCollins">
-                    </div>
-
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </div>
-                </form>
-            </div>
-        </div> 
-        <div class="row mt-3">
+           
+<div class="row mt-3">
   {% for book in books %}
   <div class="col-md-3 col-sm-6 mb-3">
     <div class="card h-100 shadow-sm border-0">
@@ -196,7 +90,6 @@
                 {% endfor %}
             </div>
         </div> {% endcomment %}
-               
     </div>
     
       
@@ -237,5 +130,5 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}
+

@@ -22,6 +22,15 @@ def fetch_book_info_from_google(title):
                 'Description': book.get('description', 'No description available.'),
                 'Image_Url': book.get('imageLinks', {}).get('thumbnail', '')
             }
+    #     {
+    #     "model": "app.Books_seller",  # Replace 'app' with your actual app name
+    #     "fields": {
+    #         'Title': book.get('title'),
+    #         'Author': ', '.join(book.get('authors', [])),
+    #         'Description': book.get('description', 'No description available.'),
+    #         'Image_Url': book.get('imageLinks', {}).get('thumbnail', '')
+    #     }
+    # }
     return None
 
 def get_gemini_recommendation(prompt_text):
@@ -44,5 +53,11 @@ def get_gemini_recommendation(prompt_text):
             print("❌ JSON parse error:", e)
     return recommendations
 
-            
+# import pandas as pd
+# df = pd.read_csv('core/books_seller.csv')
+# books_best_seller = []
+# for i in df['Title']:
+#     books_best_seller.append(fetch_book_info_from_google(i))
 
+# df = pd.DataFrame(books_best_seller)
+# df.to_json('core/books_best_seller.json', orient='records', lines=True)
